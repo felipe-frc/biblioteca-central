@@ -1,3 +1,5 @@
+[![CI (.NET)](https://github.com/felipe-frc/biblioteca-central-console/actions/workflows/dotnet.yml/badge.svg)](https://github.com/felipe-frc/biblioteca-central-console/actions/workflows/dotnet.yml)
+
 # Biblioteca Central
 
 Sistema de biblioteca em **C# / .NET** com **CRUD de Livros e Usuários** e **controle de Empréstimos** (criar, listar e devolver).
