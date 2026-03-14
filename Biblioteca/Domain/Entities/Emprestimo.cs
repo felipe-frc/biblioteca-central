@@ -6,8 +6,8 @@ namespace Biblioteca.Domain.Entities
     public class Emprestimo
     {
         public int Id { get; private set; }
-        public Livro Livro { get; private set; }
-        public Usuario Usuario { get; private set; }
+        public Livro Livro { get; private set; } = default!;
+        public Usuario Usuario { get; private set; } = default!;
         public DateTime DataEmprestimo { get; private set; }
         public DateTime DataPrevistaDevolucao { get; private set; }
         public DateTime? DataDevolucao { get; private set; }

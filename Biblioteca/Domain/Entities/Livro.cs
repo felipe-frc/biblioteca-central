@@ -6,8 +6,8 @@ namespace Biblioteca.Domain.Entities
     {
 
         public int Id { get; private set; }
-        public string Titulo { get; private set; }
-        public string Autor { get; private set; }
+        public string Titulo { get; private set; } = default!;
+        public string Autor { get; private set; } = default!;
         public int AnoPublicacao { get; private set; }
         public bool Disponivel { get; private set; }
        

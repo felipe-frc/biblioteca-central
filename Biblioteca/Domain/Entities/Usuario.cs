@@ -5,8 +5,8 @@ namespace Biblioteca.Domain.Entities
     {
        
         public int Id { get; private set; }
-        public string Nome { get; private set; }
-        public string Email { get; private set; }
+        public string Nome { get; private set; } = default!;
+        public string Email { get; private set; } = default!;
 
         public Usuario(int id, string nome, string email)
         {
