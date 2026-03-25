@@ -141,7 +141,7 @@ dotnet test
 
 ![Livros](docs/images/livros.png)
 
-### ➕ Cadastro de livro
+### ➕ Cadastro de usuário
 
 ![Cadastro](docs/images/cadastro.png)
 
