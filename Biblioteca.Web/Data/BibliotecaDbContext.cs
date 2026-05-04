@@ -26,6 +26,10 @@ namespace Biblioteca.Web.Data
                 .HasOne(e => e.Usuario)
                 .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Usuario>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
         }
     }
 }

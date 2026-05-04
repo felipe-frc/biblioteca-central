@@ -1,168 +1,172 @@
-# 📚 Biblioteca Áurea
+[![CI (.NET)](https://github.com/felipe-frc/biblioteca-central/actions/workflows/dotnet.yml/badge.svg)](https://github.com/felipe-frc/biblioteca-central/actions/workflows/dotnet.yml)
 
-Sistema de gerenciamento de biblioteca desenvolvido em **C# com ASP.NET Core MVC**, com foco em **boas práticas de arquitetura, organização de código e regras de negócio bem definidas**.
+# 📚 Biblioteca Central
 
----
-
-## 🎯 Objetivo do projeto
-
-Este projeto foi desenvolvido com o objetivo de praticar:
-
-- Arquitetura em camadas
-- Separação de responsabilidades
-- Modelagem de domínio
-- Boas práticas com ASP.NET Core e Entity Framework
-- Escrita de código limpo e testável
+Sistema web de gerenciamento de biblioteca desenvolvido com **ASP.NET Core MVC**, **Entity Framework Core** e **SQLite**. Implementa controle completo de livros, usuários e empréstimos, com arquitetura em camadas, testes automatizados com **xUnit** e pipeline de CI/CD via **GitHub Actions**.
 
 ---
 
-## 🚀 Funcionalidades
+## 🌐 Acesse o Projeto
 
-- Cadastro, edição e exclusão de livros
-- Cadastro, edição e exclusão de usuários
-- Registro de empréstimos e devoluções
-- Controle de disponibilidade de livros
-- Paginação nas listagens
-- Validações de regras de negócio
-- Testes automatizados
+> 🚧 Deploy em breve — acompanhe as releases para novidades.
+
+📂 **Repositório:** [github.com/felipe-frc/biblioteca-central](https://github.com/felipe-frc/biblioteca-central)
 
 ---
 
-## ✅ Qualidade e testes
+## 📌 Funcionalidades
 
-- Testes unitários de regras de negócio com xUnit
-- Testes de integração para fluxo de empréstimo (AppService + DbContext)
-- Pipeline CI com GitHub Actions executando build e testes a cada push/PR
+**Livros**
+- Cadastrar, listar, editar e excluir
+- Livro fica **indisponível** automaticamente ao ser emprestado e volta a ficar **disponível** na devolução
+- Exclusão bloqueada quando existe histórico de empréstimos vinculado
+
+**Usuários**
+- Cadastrar, listar, editar e excluir
+- Exclusão bloqueada quando existe histórico de empréstimos vinculado
+
+**Empréstimos**
+- Criar, listar e registrar devoluções
+- Validações: data retroativa, livro indisponível, devolução duplicada
+- Mensagens de sucesso e erro via Bootstrap Alerts
 
 ---
 
-## 🛠️ Tecnologias utilizadas
+## 🛠️ Tecnologias
 
-- .NET 8
-- ASP.NET Core MVC
-- Entity Framework Core
-- SQLite
-- xUnit
+| Camada | Tecnologia |
+|---|---|
+| Linguagem | C# / .NET 8 |
+| Framework Web | ASP.NET Core MVC |
+| ORM | Entity Framework Core |
+| Banco de dados | SQLite |
+| Testes | xUnit |
+| CI/CD | GitHub Actions |
+| Front-end | Bootstrap 5 + Razor Views |
 
 ---
 
-## 🏗️ Arquitetura do projeto
+## 🏗️ Arquitetura
 
-O sistema foi estruturado utilizando separação em camadas:
+O projeto é organizado em três camadas com separação clara de responsabilidades:
 
-```text
-Controller → Service (Application Layer) → DbContext → Banco de Dados
+```
+biblioteca-central/
+│
+├── Biblioteca/               # Domínio — entidades e regras de negócio
+│   ├── Models/               # Livro, Usuario, Emprestimo
+│   ├── Interfaces/           # Contratos dos repositórios
+│   └── Services/             # Lógica de negócio (validações, regras)
+│
+├── Biblioteca.Web/           # Interface MVC — controllers, views, configuração
+│   ├── Controllers/          # LivroController, UsuarioController, EmprestimoController
+│   ├── Views/                # Razor Views para cada entidade
+│   ├── Data/                 # DbContext e Migrations (EF Core)
+│   └── Program.cs            # Entry point e injeção de dependência
+│
+├── Biblioteca.Tests/         # Testes automatizados com xUnit
+│   └── ...                   # Testes de serviços e regras de negócio
+│
+├── .github/workflows/        # Pipeline CI/CD
+│   └── dotnet.yml            # Build + testes automáticos a cada push
+│
+└── Biblioteca.sln            # Solution file
 ```
 
-### Camadas:
+---
 
-- **Biblioteca (Core)**
-  Contém regras de negócio, entidades e serviços do domínio
+## 📸 Interface do Sistema
 
-- **Biblioteca.Web**
-  Responsável pela interface MVC e interação com o usuário
+### 🏠 Página Principal
+![Página Principal](docs/images/)
 
-- **Services (Application Layer)**
-  Centraliza a lógica de aplicação, evitando acoplamento com controllers
+### 📋 Listagem de Livros
+<!-- Substitua pelo caminho real após subir as imagens -->
+![Listagem de Livros](docs/images/livros.png)
 
-- **Biblioteca.Tests**
-  Testes automatizados das entidades e regras principais
+### ➕ Cadastro de Livro
+![Cadastro de Livro](docs/images/cadastro.png)
+
+### 🔄 Controle de Empréstimos
+![Empréstimos](docs/images/emprestimos.png)
 
 ---
 
-### Decisões de arquitetura
+## ⚙️ Como Executar
 
-- **Domínio rico**: regras de negócio ficam nas entidades (`Livro`, `Usuario`, `Emprestimo`), evitando lógica espalhada em controllers.
-- **Application Service**: `EmprestimoAppService` orquestra casos de uso da aplicação web.
-- **Persistência com EF Core + SQLite**: simplicidade local com estrutura pronta para evoluir para SQL Server/PostgreSQL.
-- **Separação de projetos**:
-  - `Biblioteca` → domínio
-  - `Biblioteca.Web` → interface MVC + dados
-  - `Biblioteca.Tests` → testes automatizados
-  - `Biblioteca.Console` → simulação em terminal
+### Pré-requisitos
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- Visual Studio 2022+ ou VS Code com extensão C#
 
-  ***
-
-## 🧠 Regras de negócio
-
-- Livro emprestado fica indisponível
-- Não é possível emprestar livro indisponível
-- Não é possível excluir usuário com histórico de empréstimos
-- Não é possível excluir livro com histórico de empréstimos
-- A data prevista de devolução:
-  - Não pode ser no passado
-  - Não pode ultrapassar **365 dias**
-
----
-
-## 🔍 Diferenciais técnicos
-
-- Uso de **injeção de dependência**
-- Aplicação de **separação de responsabilidades (SoC)**
-- Implementação de **camada de serviço (Application Layer)**
-- Código organizado seguindo boas práticas de **Clean Code**
-- Estrutura preparada para evolução (API, testes, etc.)
-
----
-
-## ▶️ Como executar o projeto
-
-### 1. Restaurar dependências
+### 1. Clone o repositório
 
 ```bash
-dotnet restore
+git clone https://github.com/felipe-frc/biblioteca-central.git
+cd biblioteca-central
 ```
 
-### 2. Compilar o projeto
+### 2. Aplique as migrations (banco de dados)
 
 ```bash
-dotnet build
+cd Biblioteca.Web
+dotnet ef database update
 ```
 
-### 3. Executar a aplicação web
+> Ou pelo Visual Studio: **Console do Gerenciador de Pacotes → `Update-Database`**
+
+### 3. Execute o projeto
 
 ```bash
-dotnet run --project Biblioteca.Web/Biblioteca.Web.csproj
+dotnet run --project Biblioteca.Web
 ```
 
-### 4. Executar os testes
+> Ou pressione `F5` no Visual Studio com `Biblioteca.Web` definido como projeto de inicialização.
+
+### 4. Execute os testes
 
 ```bash
 dotnet test
 ```
 
-## 📸 Interface do sistema
+---
 
-### 🏠 Página inicial
+## 🧠 Decisões de Desenvolvimento
 
-![Home](docs/images/home.png)
+**Arquitetura em camadas**
+A separação entre `Biblioteca` (domínio), `Biblioteca.Web` (apresentação) e `Biblioteca.Tests` (testes) foi uma decisão consciente para manter o código desacoplado e testável de forma independente. As regras de negócio vivem no domínio, sem depender do framework web.
 
-### 📚 Listagem de livros
+**Entity Framework Core + SQLite**
+SQLite foi escolhido por simplicidade de setup e zero dependências externas — o banco é um único arquivo, ideal para portfólio e ambientes locais. A estrutura de migrations garante que o schema evolua de forma versionada.
 
-![Livros](docs/images/livros.png)
+**xUnit para testes**
+Os testes cobrem as regras de negócio críticas: validação de empréstimo com livro indisponível, bloqueio de exclusão com histórico e regras de devolução. A escolha do xUnit se alinha com o ecossistema .NET e integra nativamente com o GitHub Actions.
 
-### ➕ Cadastro de usuário
+**CI/CD com GitHub Actions**
+A cada push na branch `main`, o pipeline executa o build e roda todos os testes automaticamente. Isso garante que nenhuma regressão passe despercebida e demonstra maturidade no processo de desenvolvimento.
 
-![Cadastro](docs/images/cadastro.png)
-
-### 🔄 Empréstimos
-
-![Emprestimos](docs/images/emprestimos.png)
+**Bootstrap para a camada web**
+Foco mantido na lógica back-end — Bootstrap foi usado para agilizar a interface sem desviar o esforço do que realmente importa no projeto: as regras de negócio e a arquitetura.
 
 ---
 
-## 📚 Aprendizados
+## 📈 Melhorias Futuras
 
-Este projeto me permitiu praticar:
+- 🚀 Deploy na nuvem (Railway / Azure / Render)
+- 🔐 Autenticação e autorização de usuários (ASP.NET Core Identity)
+- 🔍 Filtros e busca avançada por título, autor e categoria
+- 📊 Dashboard com relatórios de empréstimos e disponibilidade
+- 🌐 API REST para consumo por aplicações externas
+- 🧪 Testes de integração com banco em memória
 
-- modelagem de domínio e encapsulamento de regras
-- tratamento de exceções e validações de entrada
-- uso de Entity Framework Core com migrations
-- escrita de testes e automação com CI
-- organização de solução em camadas
+---
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE.txt](LICENSE.txt) para mais detalhes.
 
 ---
 
 ## 👨‍💻 Autor
 
-**Felipe França**
+**Marcos Felipe França**  
+[LinkedIn](https://www.linkedin.com/in/marcosfelipefrc) · [GitHub](https://github.com/felipe-frc)
