@@ -10,13 +10,13 @@ O projeto permite controlar livros, usuários e empréstimos, aplicando validaç
 
 ## 🌐 Acesse o Projeto
 
-Este projeto ainda não possui deploy público.
-
-Atualmente, a aplicação é executada localmente via **VS Code** ou terminal, utilizando **Azure SQL Server** como banco de dados. A connection string real não é armazenada no repositório por segurança.
-
-Para executar a aplicação, siga as instruções da seção **Como Executar**.
+🔗 **Deploy:** [Biblioteca Áurea no Azure](https://biblioteca-aurea-gec0a3cnafddecgz.brazilsouth-01.azurewebsites.net/)
 
 📂 **Repositório:** [github.com/felipe-frc/biblioteca-aurea](https://github.com/felipe-frc/biblioteca-aurea)
+
+A aplicação está publicada no **Azure App Service** e utiliza **Azure SQL Server** como banco de dados.
+
+A connection string real não é armazenada no repositório por segurança. Para executar localmente, siga as instruções da seção **Como Executar no VS Code**.
 
 ---
 
@@ -72,6 +72,7 @@ Este projeto foi desenvolvido com o objetivo de praticar e demonstrar conhecimen
 | Framework Web | ASP.NET Core MVC |
 | ORM | Entity Framework Core |
 | Banco de Dados | Azure SQL Server |
+| Deploy | Azure App Service |
 | Segurança de configuração | User Secrets |
 | Testes | xUnit |
 | CI/CD | GitHub Actions |
@@ -281,9 +282,9 @@ A separação entre `Biblioteca`, `Biblioteca.Web` e `Biblioteca.Tests` foi adot
 
 O projeto utiliza **Entity Framework Core** com **Azure SQL Server**, aproximando a aplicação de um cenário real de produção. As migrations foram recriadas para SQL Server, garantindo tipos adequados como `nvarchar`, `datetime2`, `int` e `bit`.
 
-### User Secrets para dados sensíveis
+### User Secrets e configuração no Azure
 
-A connection string real não é armazenada no GitHub. Em ambiente local, o projeto utiliza **User Secrets**. Em um futuro deploy, a connection string deve ser configurada diretamente no serviço de hospedagem.
+A connection string real não é armazenada no GitHub. Em ambiente local, o projeto utiliza **User Secrets**. No deploy, a connection string é configurada diretamente no **Azure App Service**, mantendo dados sensíveis fora do repositório.
 
 ### Testes com xUnit
 
@@ -291,7 +292,7 @@ O xUnit foi escolhido por sua integração com o ecossistema .NET e por permitir
 
 ### CI/CD com GitHub Actions
 
-A integração contínua automatiza o processo de build e testes, aumentando a confiabilidade do repositório e demonstrando cuidado com qualidade de software.
+A integração contínua automatiza o processo de build, testes e deploy para o **Azure App Service**, aumentando a confiabilidade do repositório e demonstrando cuidado com qualidade de software.
 
 ### Bootstrap + Razor Views
 
@@ -301,7 +302,7 @@ O Bootstrap foi utilizado para acelerar a construção da interface e manter o f
 
 ## 📈 Melhorias Futuras
 
-- Deploy público em Azure App Service;
+- Configuração de domínio personalizado;
 - Autenticação e autorização com ASP.NET Core Identity;
 - Busca avançada por título, autor e categoria;
 - Dashboard com indicadores de empréstimos e disponibilidade;
