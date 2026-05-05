@@ -2,15 +2,17 @@
 
 # 📚 Biblioteca Central
 
-Sistema web de gerenciamento de biblioteca desenvolvido com **ASP.NET Core MVC**, **Entity Framework Core** e **SQLite**, com foco em **arquitetura em camadas**, **regras de negócio**, **testes automatizados** e **boas práticas de Engenharia de Software**.
+Sistema web de gerenciamento de biblioteca desenvolvido com **ASP.NET Core MVC**, **Entity Framework Core** e **Azure SQL Server**, com foco em **arquitetura em camadas**, **regras de negócio**, **testes automatizados** e **boas práticas de Engenharia de Software**.
 
-O projeto permite controlar livros, usuários e empréstimos, aplicando validações importantes como indisponibilidade de livros emprestados, bloqueio de exclusão quando há histórico vinculado e prevenção de devoluções duplicadas.
+O projeto permite controlar livros, usuários e empréstimos, aplicando validações importantes como indisponibilidade de livros emprestados, bloqueio de exclusão quando há histórico vinculado, prevenção de devoluções duplicadas e persistência dos dados em banco relacional na nuvem.
 
 ---
 
 ## 🌐 Acesse o Projeto
 
-Este projeto ainda não possui deploy público, pois utiliza banco **SQLite local** e foi desenvolvido com foco em execução local, arquitetura, regras de negócio e testes automatizados.
+Este projeto ainda não possui deploy público.
+
+Atualmente, a aplicação é executada localmente via **VS Code** ou terminal, utilizando **Azure SQL Server** como banco de dados. A connection string real não é armazenada no repositório por segurança.
 
 Para executar a aplicação, siga as instruções da seção **Como Executar**.
 
@@ -23,7 +25,8 @@ Para executar a aplicação, siga as instruções da seção **Como Executar**.
 Este projeto foi desenvolvido com o objetivo de praticar e demonstrar conhecimentos em:
 
 - Desenvolvimento web com **ASP.NET Core MVC**;
-- Persistência de dados com **Entity Framework Core** e **SQLite**;
+- Persistência de dados com **Entity Framework Core** e **Azure SQL Server**;
+- Configuração segura de connection string com **User Secrets**;
 - Organização em camadas e separação de responsabilidades;
 - Criação de regras de negócio para um domínio real;
 - Testes automatizados com **xUnit**;
@@ -46,6 +49,7 @@ Este projeto foi desenvolvido com o objetivo de praticar e demonstrar conhecimen
 
 - Cadastro, listagem, edição e exclusão de usuários;
 - Validação de dados cadastrais;
+- Validação de e-mail;
 - Bloqueio de exclusão quando existe histórico de empréstimos vinculado.
 
 ### Empréstimos
@@ -55,6 +59,7 @@ Este projeto foi desenvolvido com o objetivo de praticar e demonstrar conhecimen
 - Validação contra data retroativa;
 - Validação contra empréstimo de livro indisponível;
 - Validação contra devolução duplicada;
+- Controle de status do empréstimo;
 - Mensagens de sucesso e erro com **Bootstrap Alerts**.
 
 ---
@@ -66,7 +71,8 @@ Este projeto foi desenvolvido com o objetivo de praticar e demonstrar conhecimen
 | Linguagem | C# / .NET 8 |
 | Framework Web | ASP.NET Core MVC |
 | ORM | Entity Framework Core |
-| Banco de Dados | SQLite |
+| Banco de Dados | Azure SQL Server |
+| Segurança de configuração | User Secrets |
 | Testes | xUnit |
 | CI/CD | GitHub Actions |
 | Front-end | Bootstrap 5 + Razor Views |
@@ -81,14 +87,16 @@ O projeto utiliza uma organização em camadas para separar responsabilidades e 
 biblioteca-central/
 │
 ├── Biblioteca/               # Domínio — entidades, contratos e regras de negócio
-│   ├── Models/               # Livro, Usuario, Emprestimo
-│   ├── Interfaces/           # Contratos dos repositórios
+│   ├── Domain/Entities/      # Livro, Usuario, Emprestimo
+│   ├── Domain/Enums/         # StatusEmprestimo
 │   └── Services/             # Serviços de domínio e validações
 │
 ├── Biblioteca.Web/           # Aplicação web MVC
 │   ├── Controllers/          # Controllers da aplicação
 │   ├── Views/                # Razor Views
 │   ├── Data/                 # DbContext e migrations do EF Core
+│   ├── Services/             # Serviços de aplicação
+│   ├── wwwroot/              # Arquivos estáticos
 │   └── Program.cs            # Configuração da aplicação e injeção de dependência
 │
 ├── Biblioteca.Tests/         # Testes automatizados com xUnit
@@ -132,13 +140,24 @@ biblioteca-central/
 
 ---
 
-## ⚙️ Como Executar
+## ⚙️ Como Executar no VS Code
 
 ### Pré-requisitos
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- Visual Studio 2022+ ou VS Code com extensão C#
-- Git instalado na máquina
+- VS Code
+- Extensão C# para VS Code
+- Git instalado
+- Entity Framework Core CLI
+- Banco Azure SQL Server configurado
+
+Caso ainda não tenha o Entity Framework CLI instalado, execute:
+
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+---
 
 ### 1. Clone o repositório
 
@@ -147,22 +166,63 @@ git clone https://github.com/felipe-frc/biblioteca-central.git
 cd biblioteca-central
 ```
 
+---
+
 ### 2. Restaure as dependências
 
 ```bash
 dotnet restore
 ```
 
-### 3. Aplique as migrations do banco de dados
+---
+
+### 3. Configure a connection string com User Secrets
+
+Por segurança, a connection string real **não fica salva no `appsettings.json`**.
+
+Entre na pasta do projeto web:
 
 ```bash
 cd Biblioteca.Web
+```
+
+Inicialize o User Secrets, caso ainda não esteja configurado:
+
+```bash
+dotnet user-secrets init
+```
+
+Configure a connection string do Azure SQL:
+
+```bash
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "SUA_CONNECTION_STRING_DO_AZURE_SQL"
+```
+
+O arquivo `appsettings.json` deve permanecer com um valor genérico:
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "CONFIGURE_A_CONNECTION_STRING_IN_USER_SECRETS_OR_AZURE"
+  }
+}
+```
+
+---
+
+### 4. Aplique as migrations no banco
+
+Ainda dentro de `Biblioteca.Web`, execute:
+
+```bash
 dotnet ef database update
 ```
 
-> No Visual Studio, também é possível executar pelo **Console do Gerenciador de Pacotes** com o comando `Update-Database`.
+---
 
-### 4. Execute a aplicação
+### 5. Execute a aplicação
+
+Dentro de `Biblioteca.Web`, execute:
 
 ```bash
 dotnet run
@@ -174,7 +234,23 @@ Ou, a partir da raiz do repositório:
 dotnet run --project Biblioteca.Web
 ```
 
-### 5. Execute os testes
+Após iniciar, o terminal exibirá uma URL parecida com:
+
+```text
+Now listening on: http://localhost:5026
+```
+
+Abra essa URL no navegador:
+
+```text
+http://localhost:5026
+```
+
+---
+
+### 6. Execute os testes
+
+A partir da raiz do repositório, execute:
 
 ```bash
 dotnet test
@@ -201,9 +277,13 @@ Além disso, a pipeline de **GitHub Actions** executa build e testes automaticam
 
 A separação entre `Biblioteca`, `Biblioteca.Web` e `Biblioteca.Tests` foi adotada para manter o projeto mais organizado, desacoplado e testável. As regras de negócio ficam concentradas no domínio, evitando dependência direta da camada web.
 
-### Entity Framework Core + SQLite
+### Entity Framework Core + Azure SQL Server
 
-O SQLite foi escolhido por ser simples de configurar, não exigir servidor externo e funcionar bem em projetos de portfólio e execução local. O Entity Framework Core facilita o mapeamento das entidades e o versionamento do banco por meio de migrations.
+O projeto utiliza **Entity Framework Core** com **Azure SQL Server**, aproximando a aplicação de um cenário real de produção. As migrations foram recriadas para SQL Server, garantindo tipos adequados como `nvarchar`, `datetime2`, `int` e `bit`.
+
+### User Secrets para dados sensíveis
+
+A connection string real não é armazenada no GitHub. Em ambiente local, o projeto utiliza **User Secrets**. Em um futuro deploy, a connection string deve ser configurada diretamente no serviço de hospedagem.
 
 ### Testes com xUnit
 
@@ -221,7 +301,7 @@ O Bootstrap foi utilizado para acelerar a construção da interface e manter o f
 
 ## 📈 Melhorias Futuras
 
-- Deploy em nuvem com Railway, Render ou Azure;
+- Deploy público em Azure App Service;
 - Autenticação e autorização com ASP.NET Core Identity;
 - Busca avançada por título, autor e categoria;
 - Dashboard com indicadores de empréstimos e disponibilidade;
