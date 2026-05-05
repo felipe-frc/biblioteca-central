@@ -7,18 +7,25 @@
     /// </summary>
     public class Usuario
     {
+        public const int NomeMaxLength = 100;
+        public const int EmailMaxLength = 254;
+
         private static readonly Regex EmailRegex = new(
             @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         public int Id { get; private set; }
+
         public string Nome { get; private set; } = default!;
+
         public string Email { get; private set; } = default!;
 
-        private Usuario() { }
+        private Usuario()
+        {
+        }
 
         /// <summary>
-        /// Construtor para criação de novo usuário (sem ID - gerado pelo banco).
+        /// Construtor para criação de novo usuário sem ID, gerado pelo banco de dados.
         /// </summary>
         public Usuario(string nome, string email)
         {
@@ -29,7 +36,7 @@
         }
 
         /// <summary>
-        /// Construtor para criação de usuário com ID (usado em testes/console).
+        /// Construtor para criação de usuário com ID, usado em testes.
         /// </summary>
         public Usuario(int id, string nome, string email)
         {
@@ -39,6 +46,17 @@
             ValidarDados(nome, email);
 
             Id = id;
+            Nome = nome.Trim();
+            Email = email.Trim().ToLowerInvariant();
+        }
+
+        /// <summary>
+        /// Atualiza os dados do usuário.
+        /// </summary>
+        public void AtualizarDados(string nome, string email)
+        {
+            ValidarDados(nome, email);
+
             Nome = nome.Trim();
             Email = email.Trim().ToLowerInvariant();
         }
@@ -57,11 +75,11 @@
             string nomeTratado = nome.Trim();
             string emailTratado = email.Trim();
 
-            if (string.IsNullOrWhiteSpace(nomeTratado))
-                throw new ArgumentException("O nome não pode ser vazio.", nameof(nome));
+            if (nomeTratado.Length > NomeMaxLength)
+                throw new ArgumentException($"O nome deve ter no máximo {NomeMaxLength} caracteres.", nameof(nome));
 
-            if (string.IsNullOrWhiteSpace(emailTratado))
-                throw new ArgumentException("O email não pode ser vazio.", nameof(email));
+            if (emailTratado.Length > EmailMaxLength)
+                throw new ArgumentException($"O email deve ter no máximo {EmailMaxLength} caracteres.", nameof(email));
 
             if (!IsValidEmail(emailTratado))
                 throw new ArgumentException("Email inválido. Use o formato: usuario@dominio.com", nameof(email));
@@ -72,29 +90,16 @@
         /// </summary>
         private static bool IsValidEmail(string email)
         {
-            if (string.IsNullOrWhiteSpace(email) || email.Length > 254)
+            if (string.IsNullOrWhiteSpace(email))
                 return false;
 
-            // Validação básica com regex
-            if (!EmailRegex.IsMatch(email))
+            if (email.Length > EmailMaxLength)
                 return false;
 
-            // Validação adicional: não pode ter espaços
-            if (email.Contains(" "))
+            if (email.Contains(' '))
                 return false;
 
-            return true;
-        }
-
-        /// <summary>
-        /// Atualiza os dados do usuário.
-        /// </summary>
-        public void AtualizarDados(string nome, string email)
-        {
-            ValidarDados(nome, email);
-
-            Nome = nome.Trim();
-            Email = email.Trim().ToLowerInvariant();
+            return EmailRegex.IsMatch(email);
         }
     }
 }

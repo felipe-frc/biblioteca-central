@@ -5,15 +5,24 @@
     /// </summary>
     public class Livro
     {
+        public const int TituloMaxLength = 150;
+        public const int AutorMaxLength = 120;
+
         private const int AnoPublicacaoMinimo = 1450;
 
         public int Id { get; private set; }
+
         public string Titulo { get; private set; } = default!;
+
         public string Autor { get; private set; } = default!;
+
         public int AnoPublicacao { get; private set; }
+
         public bool Disponivel { get; private set; }
 
-        private Livro() { }
+        private Livro()
+        {
+        }
 
         /// <summary>
         /// Construtor para criação de novo livro.
@@ -46,21 +55,15 @@
         }
 
         /// <summary>
-        /// Valida os dados do livro.
+        /// Atualiza os dados do livro.
         /// </summary>
-        private static void ValidarDados(string titulo, string autor, int anoPublicacao)
+        public void AtualizarDados(string titulo, string autor, int anoPublicacao)
         {
-            if (string.IsNullOrWhiteSpace(titulo))
-                throw new ArgumentException("O título não pode ser vazio.", nameof(titulo));
+            ValidarDados(titulo, autor, anoPublicacao);
 
-            if (string.IsNullOrWhiteSpace(autor))
-                throw new ArgumentException("O autor não pode ser vazio.", nameof(autor));
-
-            int anoAtual = DateTime.Now.Year;
-            if (anoPublicacao < AnoPublicacaoMinimo || anoPublicacao > anoAtual)
-                throw new ArgumentOutOfRangeException(
-                    nameof(anoPublicacao),
-                    $"O ano de publicação deve estar entre {AnoPublicacaoMinimo} e {anoAtual}.");
+            Titulo = titulo.Trim();
+            Autor = autor.Trim();
+            AnoPublicacao = anoPublicacao;
         }
 
         /// <summary>
@@ -86,15 +89,33 @@
         }
 
         /// <summary>
-        /// Atualiza os dados do livro.
+        /// Valida os dados do livro.
         /// </summary>
-        public void AtualizarDados(string titulo, string autor, int anoPublicacao)
+        private static void ValidarDados(string titulo, string autor, int anoPublicacao)
         {
-            ValidarDados(titulo, autor, anoPublicacao);
+            if (string.IsNullOrWhiteSpace(titulo))
+                throw new ArgumentException("O título não pode ser vazio.", nameof(titulo));
 
-            Titulo = titulo.Trim();
-            Autor = autor.Trim();
-            AnoPublicacao = anoPublicacao;
+            if (string.IsNullOrWhiteSpace(autor))
+                throw new ArgumentException("O autor não pode ser vazio.", nameof(autor));
+
+            string tituloTratado = titulo.Trim();
+            string autorTratado = autor.Trim();
+
+            if (tituloTratado.Length > TituloMaxLength)
+                throw new ArgumentException($"O título deve ter no máximo {TituloMaxLength} caracteres.", nameof(titulo));
+
+            if (autorTratado.Length > AutorMaxLength)
+                throw new ArgumentException($"O autor deve ter no máximo {AutorMaxLength} caracteres.", nameof(autor));
+
+            int anoAtual = DateTime.Now.Year;
+
+            if (anoPublicacao < AnoPublicacaoMinimo || anoPublicacao > anoAtual)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(anoPublicacao),
+                    $"O ano de publicação deve estar entre {AnoPublicacaoMinimo} e {anoAtual}.");
+            }
         }
     }
 }
