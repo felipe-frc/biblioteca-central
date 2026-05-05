@@ -36,11 +36,13 @@ namespace Biblioteca.Web.Controllers
                 .OrderBy(u => u.Id);
 
             var totalUsuarios = query.Count();
+
             var comEmail = query.Count(u => !string.IsNullOrWhiteSpace(u.Email));
 
             var usuariosInadimplentes = _context.Emprestimos
+                .AsNoTracking()
                 .Where(e => e.DataDevolucao == null && e.DataPrevistaDevolucao < DateTime.Today)
-                .Select(e => e.Usuario.Id)
+                .Select(e => e.UsuarioId)
                 .Distinct()
                 .Count();
 
@@ -207,10 +209,10 @@ namespace Biblioteca.Web.Controllers
                 return NotFound();
 
             bool temEmprestimoAtivo = _context.Emprestimos
-                .Any(e => e.Usuario.Id == id && e.DataDevolucao == null);
+                .Any(e => e.UsuarioId == id && e.DataDevolucao == null);
 
             bool temHistoricoEmprestimo = _context.Emprestimos
-                .Any(e => e.Usuario.Id == id);
+                .Any(e => e.UsuarioId == id);
 
             ViewBag.TemEmprestimoAtivo = temEmprestimoAtivo;
             ViewBag.TemHistoricoEmprestimo = temHistoricoEmprestimo;
@@ -231,7 +233,7 @@ namespace Biblioteca.Web.Controllers
                 return NotFound();
 
             bool temEmprestimoAtivo = _context.Emprestimos
-                .Any(e => e.Usuario.Id == id && e.DataDevolucao == null);
+                .Any(e => e.UsuarioId == id && e.DataDevolucao == null);
 
             if (temEmprestimoAtivo)
             {
@@ -240,7 +242,7 @@ namespace Biblioteca.Web.Controllers
             }
 
             bool temHistoricoEmprestimo = _context.Emprestimos
-                .Any(e => e.Usuario.Id == id);
+                .Any(e => e.UsuarioId == id);
 
             if (temHistoricoEmprestimo)
             {

@@ -24,12 +24,12 @@ namespace Biblioteca.Web.Services
             if (usuario is null)
                 throw new InvalidOperationException("Usuário não encontrado.");
 
-            var emprestimo = new Emprestimo(
-                livro,
-                usuario,
-                dataPrevistaDevolucao
-            );
+            if (!livro.Disponivel)
+                throw new InvalidOperationException("Este livro não está disponível para empréstimo.");
 
+            var emprestimo = new Emprestimo(livro, usuario, dataPrevistaDevolucao);
+
+            _context.Livros.Update(livro);
             _context.Emprestimos.Add(emprestimo);
             _context.SaveChanges();
 
@@ -46,7 +46,13 @@ namespace Biblioteca.Web.Services
             if (emprestimo is null)
                 throw new InvalidOperationException("Empréstimo não encontrado.");
 
+            if (emprestimo.DataDevolucao is not null)
+                throw new InvalidOperationException("Este empréstimo já foi devolvido.");
+
             emprestimo.Devolver();
+
+            _context.Livros.Update(emprestimo.Livro);
+            _context.Emprestimos.Update(emprestimo);
             _context.SaveChanges();
         }
     }

@@ -1,6 +1,6 @@
 using Biblioteca.Services;
-using Biblioteca.Web.Services;
 using Biblioteca.Web.Data;
+using Biblioteca.Web.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,18 +8,29 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<BibliotecaDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+    options.UseSqlServer(
+        connectionString,
+        sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 2,
+                maxRetryDelay: TimeSpan.FromSeconds(5),
+                errorNumbersToAdd: null
+            );
+
+            sqlOptions.CommandTimeout(15);
+        });
+});
 
 builder.Services.AddScoped<IEmprestimoAppService, EmprestimoAppService>();
-
 builder.Services.AddScoped<IEmprestimoService, BibliotecaService>();
 
-builder.Services.AddLogging(config =>
-{
-    config.AddConsole();
-    config.AddDebug();
-    config.AddEventSourceLogger();
-});
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 
 var app = builder.Build();
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Biblioteca.Web.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialSqlServer : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,12 +15,12 @@ namespace Biblioteca.Web.Migrations
                 name: "Livros",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Titulo = table.Column<string>(type: "TEXT", nullable: false),
-                    Autor = table.Column<string>(type: "TEXT", nullable: false),
-                    AnoPublicacao = table.Column<int>(type: "INTEGER", nullable: false),
-                    Disponivel = table.Column<bool>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Titulo = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Autor = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
+                    AnoPublicacao = table.Column<int>(type: "int", nullable: false),
+                    Disponivel = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,10 +31,10 @@ namespace Biblioteca.Web.Migrations
                 name: "Usuarios",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Nome = table.Column<string>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(254)", maxLength: 254, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,14 +45,14 @@ namespace Biblioteca.Web.Migrations
                 name: "Emprestimos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    LivroId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UsuarioId = table.Column<int>(type: "INTEGER", nullable: false),
-                    DataEmprestimo = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    DataPrevistaDevolucao = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    DataDevolucao = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    Status = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LivroId = table.Column<int>(type: "int", nullable: false),
+                    UsuarioId = table.Column<int>(type: "int", nullable: false),
+                    DataEmprestimo = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DataPrevistaDevolucao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DataDevolucao = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -72,14 +72,40 @@ namespace Biblioteca.Web.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Emprestimos_DataPrevistaDevolucao",
+                table: "Emprestimos",
+                column: "DataPrevistaDevolucao");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Emprestimos_LivroId",
                 table: "Emprestimos",
                 column: "LivroId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Emprestimos_Status",
+                table: "Emprestimos",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Emprestimos_UsuarioId",
                 table: "Emprestimos",
                 column: "UsuarioId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Livros_Autor",
+                table: "Livros",
+                column: "Autor");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Livros_Titulo",
+                table: "Livros",
+                column: "Titulo");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Usuarios_Email",
+                table: "Usuarios",
+                column: "Email",
+                unique: true);
         }
 
         /// <inheritdoc />

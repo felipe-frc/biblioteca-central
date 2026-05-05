@@ -221,7 +221,7 @@ namespace Biblioteca.Web.Controllers
                     return NotFound();
                 }
 
-                bool temEmprestimoRelacionado = _context.Emprestimos.Any(e => e.Livro.Id == id);
+                bool temEmprestimoRelacionado = _context.Emprestimos.Any(e => e.LivroId == id);
                 ViewBag.TemEmprestimoRelacionado = temEmprestimoRelacionado;
 
                 return View(livro);
@@ -249,7 +249,7 @@ namespace Biblioteca.Web.Controllers
                     return NotFound();
                 }
 
-                bool temEmprestimoRelacionado = _context.Emprestimos.Any(e => e.Livro.Id == id);
+                bool temEmprestimoRelacionado = _context.Emprestimos.Any(e => e.LivroId == id);
                 if (temEmprestimoRelacionado)
                 {
                     _logger.LogWarning("Tentativa de deletar livro com empréstimos. ID: {LivroId}", id);
