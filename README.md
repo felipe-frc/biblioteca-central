@@ -1,6 +1,6 @@
-[![CI (.NET)](https://github.com/felipe-frc/biblioteca-central/actions/workflows/dotnet.yml/badge.svg)](https://github.com/felipe-frc/biblioteca-central/actions/workflows/dotnet.yml)
+[![CI (.NET)](https://github.com/felipe-frc/biblioteca-aurea/actions/workflows/dotnet.yml/badge.svg)](https://github.com/felipe-frc/biblioteca-aurea/actions/workflows/dotnet.yml)
 
-# 📚 Biblioteca Central
+# 📚 Biblioteca Áurea
 
 Sistema web de gerenciamento de biblioteca desenvolvido com **ASP.NET Core MVC**, **Entity Framework Core** e **Azure SQL Server**, com foco em **arquitetura em camadas**, **regras de negócio**, **testes automatizados** e **boas práticas de Engenharia de Software**.
 
@@ -16,7 +16,7 @@ Atualmente, a aplicação é executada localmente via **VS Code** ou terminal, u
 
 Para executar a aplicação, siga as instruções da seção **Como Executar**.
 
-📂 **Repositório:** [github.com/felipe-frc/biblioteca-central](https://github.com/felipe-frc/biblioteca-central)
+📂 **Repositório:** [github.com/felipe-frc/biblioteca-aurea](https://github.com/felipe-frc/biblioteca-aurea)
 
 ---
 
@@ -84,7 +84,7 @@ Este projeto foi desenvolvido com o objetivo de praticar e demonstrar conhecimen
 O projeto utiliza uma organização em camadas para separar responsabilidades e facilitar manutenção, testes e evolução.
 
 ```text
-biblioteca-central/
+biblioteca-aurea/
 │
 ├── Biblioteca/               # Domínio — entidades, contratos e regras de negócio
 │   ├── Domain/Entities/      # Livro, Usuario, Emprestimo
@@ -116,7 +116,7 @@ biblioteca-central/
 
 ### 🏠 Home
 
-![Tela inicial do sistema Biblioteca Central](docs/images/home.png)
+![Tela inicial do sistema Biblioteca Áurea](docs/images/home.png)
 
 ### 📋 Listagem de Livros
 
@@ -162,8 +162,8 @@ dotnet tool install --global dotnet-ef
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/felipe-frc/biblioteca-central.git
-cd biblioteca-central
+git clone https://github.com/felipe-frc/biblioteca-aurea.git
+cd biblioteca-aurea
 ```
 
 ---
