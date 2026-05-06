@@ -6,9 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.Web.Controllers
 {
-    /// <summary>
-    /// Controller responsável pela gestão de livros.
-    /// </summary>
     public class LivrosController : Controller
     {
         private readonly BibliotecaDbContext _context;
@@ -20,9 +17,6 @@ namespace Biblioteca.Web.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Lista livros com paginação.
-        /// </summary>
         public IActionResult Index(int page = 1)
         {
             const int pageSize = 6;
@@ -31,17 +25,24 @@ namespace Biblioteca.Web.Controllers
             {
                 var query = _context.Livros
                     .AsNoTracking()
-                    .OrderBy(l => l.Id);
+                    .OrderBy(l => l.Titulo);
 
                 var totalLivros = query.Count();
                 var totalDisponiveis = query.Count(l => l.Disponivel);
-                var anoMaisRecente = totalLivros > 0 ? query.Max(l => l.AnoPublicacao).ToString() : "-";
+
+                var publicacaoMaisRecente = totalLivros > 0
+                    ? query.Max(l => l.DataPublicacao).ToString("dd/MM/yyyy")
+                    : "-";
 
                 var totalPages = (int)Math.Ceiling(totalLivros / (double)pageSize);
-                if (totalPages == 0) totalPages = 1;
+                if (totalPages == 0)
+                    totalPages = 1;
 
-                if (page < 1) page = 1;
-                if (page > totalPages) page = totalPages;
+                if (page < 1)
+                    page = 1;
+
+                if (page > totalPages)
+                    page = totalPages;
 
                 var livros = query
                     .Skip((page - 1) * pageSize)
@@ -55,9 +56,8 @@ namespace Biblioteca.Web.Controllers
 
                 ViewBag.TotalLivros = totalLivros;
                 ViewBag.TotalDisponiveis = totalDisponiveis;
-                ViewBag.AnoMaisRecente = anoMaisRecente;
+                ViewBag.PublicacaoMaisRecente = publicacaoMaisRecente;
 
-                _logger.LogInformation("Página de livros acessada. Página: {Page}, Total: {Total}", page, totalLivros);
                 return View(livros);
             }
             catch (Exception ex)
@@ -68,17 +68,11 @@ namespace Biblioteca.Web.Controllers
             }
         }
 
-        /// <summary>
-        /// Exibe formulário para criar novo livro.
-        /// </summary>
         public IActionResult Create()
         {
             return View(new LivroFormViewModel());
         }
 
-        /// <summary>
-        /// Cria novo livro.
-        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(LivroFormViewModel model)
@@ -88,31 +82,29 @@ namespace Biblioteca.Web.Controllers
 
             try
             {
-                _logger.LogInformation("Criando novo livro: {Titulo} por {Autor}", model.Titulo, model.Autor);
+                var livro = new Livro(
+                    model.Titulo,
+                    model.Autor,
+                    model.Editora,
+                    model.Edicao,
+                    model.DataPublicacao!.Value,
+                    model.NumeroPaginas!.Value);
 
-                var livro = new Livro(model.Titulo, model.Autor, model.AnoPublicacao!.Value);
                 _context.Livros.Add(livro);
                 _context.SaveChanges();
 
-                _logger.LogInformation("Livro criado com sucesso. ID: {LivroId}, Título: {Titulo}", livro.Id, livro.Titulo);
                 TempData["Sucesso"] = "Livro cadastrado com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
             catch (ArgumentException ex)
             {
-                _logger.LogWarning(ex, "Erro de validação ao criar livro: {Titulo}", model.Titulo);
-
-                if (ex.ParamName == "anoPublicacao")
-                    ModelState.AddModelError(nameof(model.AnoPublicacao), "Informe um ano de publicação válido.");
-                else
-                    ModelState.AddModelError(string.Empty, ex.Message);
-
+                AdicionarErroDeDominio(model, ex);
                 return View(model);
             }
             catch (DbUpdateException ex)
             {
                 _logger.LogError(ex, "Erro de banco de dados ao criar livro: {Titulo}", model.Titulo);
-                ModelState.AddModelError(string.Empty, "Erro ao salvar o livro. Verifique se os dados já existem.");
+                ModelState.AddModelError(string.Empty, "Erro ao salvar o livro. Verifique os dados informados.");
                 return View(model);
             }
             catch (Exception ex)
@@ -123,26 +115,24 @@ namespace Biblioteca.Web.Controllers
             }
         }
 
-        /// <summary>
-        /// Exibe formulário para editar livro.
-        /// </summary>
         public IActionResult Edit(int id)
         {
             try
             {
                 var livro = _context.Livros.FirstOrDefault(l => l.Id == id);
+
                 if (livro is null)
-                {
-                    _logger.LogWarning("Tentativa de editar livro inexistente. ID: {LivroId}", id);
                     return NotFound();
-                }
 
                 var model = new LivroFormViewModel
                 {
                     Id = livro.Id,
                     Titulo = livro.Titulo,
                     Autor = livro.Autor,
-                    AnoPublicacao = livro.AnoPublicacao
+                    Editora = livro.Editora,
+                    Edicao = livro.Edicao,
+                    DataPublicacao = livro.DataPublicacao,
+                    NumeroPaginas = livro.NumeroPaginas
                 };
 
                 return View(model);
@@ -154,9 +144,6 @@ namespace Biblioteca.Web.Controllers
             }
         }
 
-        /// <summary>
-        /// Atualiza livro existente.
-        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(LivroFormViewModel model)
@@ -167,30 +154,26 @@ namespace Biblioteca.Web.Controllers
             try
             {
                 var livro = _context.Livros.FirstOrDefault(l => l.Id == model.Id);
+
                 if (livro is null)
-                {
-                    _logger.LogWarning("Tentativa de atualizar livro inexistente. ID: {LivroId}", model.Id);
                     return NotFound();
-                }
 
-                _logger.LogInformation("Atualizando livro. ID: {LivroId}, Novo título: {Titulo}", model.Id, model.Titulo);
+                livro.AtualizarDados(
+                    model.Titulo,
+                    model.Autor,
+                    model.Editora,
+                    model.Edicao,
+                    model.DataPublicacao!.Value,
+                    model.NumeroPaginas!.Value);
 
-                livro.AtualizarDados(model.Titulo, model.Autor, model.AnoPublicacao!.Value);
                 _context.SaveChanges();
 
-                _logger.LogInformation("Livro atualizado com sucesso. ID: {LivroId}", model.Id);
                 TempData["Sucesso"] = "Livro atualizado com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
             catch (ArgumentException ex)
             {
-                _logger.LogWarning(ex, "Erro de validação ao atualizar livro. ID: {LivroId}", model.Id);
-
-                if (ex.ParamName == "anoPublicacao")
-                    ModelState.AddModelError(nameof(model.AnoPublicacao), "Informe um ano de publicação válido.");
-                else
-                    ModelState.AddModelError(string.Empty, ex.Message);
-
+                AdicionarErroDeDominio(model, ex);
                 return View(model);
             }
             catch (DbUpdateException ex)
@@ -207,19 +190,16 @@ namespace Biblioteca.Web.Controllers
             }
         }
 
-        /// <summary>
-        /// Exibe confirmação de exclusão.
-        /// </summary>
         public IActionResult Delete(int id)
         {
             try
             {
-                var livro = _context.Livros.AsNoTracking().FirstOrDefault(l => l.Id == id);
+                var livro = _context.Livros
+                    .AsNoTracking()
+                    .FirstOrDefault(l => l.Id == id);
+
                 if (livro is null)
-                {
-                    _logger.LogWarning("Tentativa de deletar livro inexistente. ID: {LivroId}", id);
                     return NotFound();
-                }
 
                 bool temEmprestimoRelacionado = _context.Emprestimos.Any(e => e.LivroId == id);
                 ViewBag.TemEmprestimoRelacionado = temEmprestimoRelacionado;
@@ -233,9 +213,6 @@ namespace Biblioteca.Web.Controllers
             }
         }
 
-        /// <summary>
-        /// Confirma e executa exclusão do livro.
-        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
@@ -243,26 +220,21 @@ namespace Biblioteca.Web.Controllers
             try
             {
                 var livro = _context.Livros.FirstOrDefault(l => l.Id == id);
+
                 if (livro is null)
-                {
-                    _logger.LogWarning("Tentativa de deletar livro inexistente. ID: {LivroId}", id);
                     return NotFound();
-                }
 
                 bool temEmprestimoRelacionado = _context.Emprestimos.Any(e => e.LivroId == id);
+
                 if (temEmprestimoRelacionado)
                 {
-                    _logger.LogWarning("Tentativa de deletar livro com empréstimos. ID: {LivroId}", id);
                     TempData["Erro"] = "Não é possível excluir este livro porque ele já possui empréstimos registrados.";
                     return RedirectToAction(nameof(Index));
                 }
 
-                _logger.LogInformation("Deletando livro. ID: {LivroId}, Título: {Titulo}", id, livro.Titulo);
-
                 _context.Livros.Remove(livro);
                 _context.SaveChanges();
 
-                _logger.LogInformation("Livro deletado com sucesso. ID: {LivroId}", id);
                 TempData["Sucesso"] = "Livro excluído com sucesso!";
                 return RedirectToAction(nameof(Index));
             }
@@ -277,6 +249,34 @@ namespace Biblioteca.Web.Controllers
                 _logger.LogError(ex, "Erro inesperado ao deletar livro. ID: {LivroId}", id);
                 TempData["Erro"] = "Ocorreu um erro inesperado ao excluir o livro.";
                 return RedirectToAction(nameof(Index));
+            }
+        }
+
+        private void AdicionarErroDeDominio(LivroFormViewModel model, ArgumentException ex)
+        {
+            switch (ex.ParamName)
+            {
+                case "titulo":
+                    ModelState.AddModelError(nameof(model.Titulo), ex.Message);
+                    break;
+                case "autor":
+                    ModelState.AddModelError(nameof(model.Autor), ex.Message);
+                    break;
+                case "editora":
+                    ModelState.AddModelError(nameof(model.Editora), ex.Message);
+                    break;
+                case "edicao":
+                    ModelState.AddModelError(nameof(model.Edicao), ex.Message);
+                    break;
+                case "dataPublicacao":
+                    ModelState.AddModelError(nameof(model.DataPublicacao), ex.Message);
+                    break;
+                case "numeroPaginas":
+                    ModelState.AddModelError(nameof(model.NumeroPaginas), ex.Message);
+                    break;
+                default:
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                    break;
             }
         }
     }

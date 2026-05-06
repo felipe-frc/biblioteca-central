@@ -34,6 +34,8 @@ namespace Biblioteca.Web.Data
                 entity.Property(l => l.Id)
                     .ValueGeneratedOnAdd();
 
+                entity.Ignore(l => l.AnoPublicacao);
+
                 entity.Property(l => l.Titulo)
                     .IsRequired()
                     .HasColumnType("nvarchar(150)")
@@ -44,7 +46,21 @@ namespace Biblioteca.Web.Data
                     .HasColumnType("nvarchar(120)")
                     .HasMaxLength(Livro.AutorMaxLength);
 
-                entity.Property(l => l.AnoPublicacao)
+                entity.Property(l => l.Editora)
+                    .IsRequired()
+                    .HasColumnType("nvarchar(120)")
+                    .HasMaxLength(Livro.EditoraMaxLength);
+
+                entity.Property(l => l.Edicao)
+                    .IsRequired()
+                    .HasColumnType("nvarchar(50)")
+                    .HasMaxLength(Livro.EdicaoMaxLength);
+
+                entity.Property(l => l.DataPublicacao)
+                    .IsRequired()
+                    .HasColumnType("datetime2");
+
+                entity.Property(l => l.NumeroPaginas)
                     .IsRequired()
                     .HasColumnType("int");
 
@@ -57,6 +73,12 @@ namespace Biblioteca.Web.Data
 
                 entity.HasIndex(l => l.Autor)
                     .HasDatabaseName("IX_Livros_Autor");
+
+                entity.HasIndex(l => l.Editora)
+                    .HasDatabaseName("IX_Livros_Editora");
+
+                entity.HasIndex(l => l.DataPublicacao)
+                    .HasDatabaseName("IX_Livros_DataPublicacao");
             });
         }
 

@@ -20,33 +20,43 @@
 
                 <div asp-validation-summary="ModelOnly" class="crud-alert crud-alert-danger crud-validation-summary"></div>
 
-                <p class="mb-4 fw-semibold text-danger">
-                    * Campo obrigatório
-                </p>
+                <p class="mb-4 fw-semibold text-danger">* Campo obrigatório</p>
 
                 <div class="crud-form-grid">
                     <div class="crud-form-group">
-                        <label asp-for="Titulo" class="crud-form-label">
-                            Título <span class="text-danger">*</span>
-                        </label>
+                        <label asp-for="Titulo" class="crud-form-label">Título <span class="text-danger">*</span></label>
                         <input asp-for="Titulo" class="crud-form-control" placeholder="Digite o título do livro" />
                         <span asp-validation-for="Titulo" class="crud-field-validation"></span>
                     </div>
 
                     <div class="crud-form-group">
-                        <label asp-for="Autor" class="crud-form-label">
-                            Autor <span class="text-danger">*</span>
-                        </label>
+                        <label asp-for="Autor" class="crud-form-label">Autor <span class="text-danger">*</span></label>
                         <input asp-for="Autor" class="crud-form-control" placeholder="Digite o nome do autor" />
                         <span asp-validation-for="Autor" class="crud-field-validation"></span>
                     </div>
 
+                    <div class="crud-form-group">
+                        <label asp-for="Editora" class="crud-form-label">Editora <span class="text-danger">*</span></label>
+                        <input asp-for="Editora" class="crud-form-control" placeholder="Digite o nome da editora" />
+                        <span asp-validation-for="Editora" class="crud-field-validation"></span>
+                    </div>
+
                     <div class="crud-form-group crud-form-group-small">
-                        <label asp-for="AnoPublicacao" class="crud-form-label">
-                            Ano de Publicação <span class="text-danger">*</span>
-                        </label>
-                        <input asp-for="AnoPublicacao" class="crud-form-control" type="number" placeholder="YYYY" />
-                        <span asp-validation-for="AnoPublicacao" class="crud-field-validation"></span>
+                        <label asp-for="Edicao" class="crud-form-label">Edição <span class="text-danger">*</span></label>
+                        <input asp-for="Edicao" class="crud-form-control" placeholder="Ex: 1ª edição" />
+                        <span asp-validation-for="Edicao" class="crud-field-validation"></span>
+                    </div>
+
+                    <div class="crud-form-group crud-form-group-small">
+                        <label asp-for="DataPublicacao" class="crud-form-label">Data de Publicação <span class="text-danger">*</span></label>
+                        <input asp-for="DataPublicacao" class="crud-form-control" type="date" />
+                        <span asp-validation-for="DataPublicacao" class="crud-field-validation"></span>
+                    </div>
+
+                    <div class="crud-form-group crud-form-group-small">
+                        <label asp-for="NumeroPaginas" class="crud-form-label">Número de Páginas <span class="text-danger">*</span></label>
+                        <input asp-for="NumeroPaginas" class="crud-form-control" type="number" min="1" placeholder="Ex: 320" />
+                        <span asp-validation-for="NumeroPaginas" class="crud-field-validation"></span>
                     </div>
                 </div>
 

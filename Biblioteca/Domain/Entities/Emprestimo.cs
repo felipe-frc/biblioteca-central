@@ -1,9 +1,9 @@
-Ôªøusing Biblioteca.Domain.Enums;
+using Biblioteca.Domain.Enums;
 
 namespace Biblioteca.Domain.Entities
 {
     /// <summary>
-    /// Entidade que representa um empr√©stimo de livro para um usu√°rio.
+    /// Entidade que representa um emprÈstimo de livro para um usu·rio.
     /// </summary>
     public class Emprestimo
     {
@@ -66,12 +66,12 @@ namespace Biblioteca.Domain.Entities
         public void Devolver()
         {
             if (DataDevolucao is not null)
-                throw new InvalidOperationException("Empr√©stimo j√° foi devolvido.");
+                throw new InvalidOperationException("EmprÈstimo j· foi devolvido.");
 
             DataDevolucao = DateTime.Now;
 
             if (Livro is not null)
-                Livro.MarcarComoDevolvido();
+                Livro.MarcarComoDisponivel();
 
             Status = DataDevolucao.Value.Date > DataPrevistaDevolucao.Date
                 ? StatusEmprestimo.Atrasado
@@ -109,10 +109,10 @@ namespace Biblioteca.Domain.Entities
                 throw new ArgumentNullException(nameof(usuario));
 
             if (dataPrevistaDevolucao.Date < DateTime.Today)
-                throw new ArgumentException("A data da devolu√ß√£o n√£o pode ser no passado.", nameof(dataPrevistaDevolucao));
+                throw new ArgumentException("A data da devoluÁ„o n„o pode ser no passado.", nameof(dataPrevistaDevolucao));
 
             if (dataPrevistaDevolucao.Date > DateTime.Today.AddDays(365))
-                throw new ArgumentException("A data prevista para devolu√ß√£o n√£o pode ultrapassar 365 dias a partir de hoje.", nameof(dataPrevistaDevolucao));
+                throw new ArgumentException("A data prevista para devoluÁ„o n„o pode ultrapassar 365 dias a partir de hoje.", nameof(dataPrevistaDevolucao));
         }
     }
 }

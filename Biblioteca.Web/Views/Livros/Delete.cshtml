@@ -24,7 +24,10 @@
                 <div class="crud-delete-item"><strong>Id:</strong> @Model.Id</div>
                 <div class="crud-delete-item"><strong>Título:</strong> @Model.Titulo</div>
                 <div class="crud-delete-item"><strong>Autor:</strong> @Model.Autor</div>
-                <div class="crud-delete-item"><strong>Ano de Publicação:</strong> @Model.AnoPublicacao</div>
+                <div class="crud-delete-item"><strong>Editora:</strong> @Model.Editora</div>
+                <div class="crud-delete-item"><strong>Edição:</strong> @Model.Edicao</div>
+                <div class="crud-delete-item"><strong>Data de Publicação:</strong> @Model.DataPublicacao.ToString("dd/MM/yyyy")</div>
+                <div class="crud-delete-item"><strong>Número de Páginas:</strong> @Model.NumeroPaginas</div>
                 <div class="crud-delete-item"><strong>Disponível:</strong> @(Model.Disponivel ? "Sim" : "Não")</div>
             </div>
 
