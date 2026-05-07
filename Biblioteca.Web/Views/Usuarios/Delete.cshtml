@@ -35,8 +35,8 @@
             @if (temEmprestimoAtivo)
             {
                 <div class="crud-alert crud-alert-danger">
-                    Não é possível excluir este usuário porque existe empréstimo em aberto.
-                    Primeiro devolva os empréstimos desse usuário.
+                    Não é possível excluir este usuário porque ele possui empréstimo ativo.
+                    Primeiro registre a devolução do empréstimo em aberto.
                 </div>
 
                 <div class="crud-form-actions">
@@ -46,7 +46,8 @@
             else if (temHistoricoEmprestimo)
             {
                 <div class="crud-alert crud-alert-danger">
-                    Não é possível excluir este usuário porque ele possui empréstimos registrados no histórico.
+                    Não é possível excluir este usuário porque ele já possui histórico de empréstimos na biblioteca.
+                    Para preservar a integridade dos registros, o cadastro deve permanecer no sistema.
                 </div>
 
                 <div class="crud-form-actions">

@@ -239,7 +239,7 @@ namespace Biblioteca.Web.Controllers
 
             if (temEmprestimoAtivo)
             {
-                TempData["Erro"] = "Não é possível excluir este usuário porque existe empréstimo em aberto.";
+                TempData["Erro"] = "Não é possível excluir este usuário porque ele possui empréstimo ativo. Primeiro registre a devolução do empréstimo em aberto.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -248,7 +248,7 @@ namespace Biblioteca.Web.Controllers
 
             if (temHistoricoEmprestimo)
             {
-                TempData["Erro"] = "Não é possível excluir este usuário porque ele possui empréstimos registrados no histórico.";
+                TempData["Erro"] = "Não é possível excluir este usuário porque ele já possui histórico de empréstimos na biblioteca. Para preservar a integridade dos registros, o cadastro deve permanecer no sistema.";
                 return RedirectToAction(nameof(Index));
             }
 
