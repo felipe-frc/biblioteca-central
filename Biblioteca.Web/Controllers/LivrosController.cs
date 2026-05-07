@@ -19,18 +19,41 @@ namespace Biblioteca.Web.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index(int page = 1)
+        public IActionResult Index(int page = 1, string? busca = null, string disponibilidade = "todos")
         {
             const int pageSize = 6;
 
             try
             {
+                busca = busca?.Trim();
+                disponibilidade = string.IsNullOrWhiteSpace(disponibilidade)
+                    ? "todos"
+                    : disponibilidade.Trim().ToLowerInvariant();
+
                 var query = _context.Livros
                     .AsNoTracking()
-                    .OrderBy(l => l.Titulo);
+                    .AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(busca))
+                {
+                    query = query.Where(l =>
+                        l.Titulo.Contains(busca) ||
+                        l.Autor.Contains(busca) ||
+                        l.Editora.Contains(busca));
+                }
+
+                query = disponibilidade switch
+                {
+                    "disponiveis" => query.Where(l => l.Disponivel),
+                    "emprestados" => query.Where(l => !l.Disponivel),
+                    _ => query
+                };
+
+                query = query.OrderBy(l => l.Titulo);
 
                 var totalLivros = query.Count();
                 var totalDisponiveis = query.Count(l => l.Disponivel);
+                var totalEmprestados = totalLivros - totalDisponiveis;
 
                 var publicacaoMaisRecente = totalLivros > 0
                     ? query.Max(l => l.DataPublicacao).ToString("dd/MM/yyyy")
@@ -58,7 +81,11 @@ namespace Biblioteca.Web.Controllers
 
                 ViewBag.TotalLivros = totalLivros;
                 ViewBag.TotalDisponiveis = totalDisponiveis;
+                ViewBag.TotalEmprestados = totalEmprestados;
                 ViewBag.PublicacaoMaisRecente = publicacaoMaisRecente;
+
+                ViewBag.Busca = busca ?? string.Empty;
+                ViewBag.Disponibilidade = disponibilidade;
 
                 return View(livros);
             }
@@ -283,4 +310,3 @@ namespace Biblioteca.Web.Controllers
         }
     }
 }
-

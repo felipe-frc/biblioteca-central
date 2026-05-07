@@ -7,7 +7,11 @@
     var livros = Model?.ToList() ?? new List<Biblioteca.Domain.Entities.Livro>();
     var totalLivros = ViewBag.TotalLivros is int tl ? tl : livros.Count;
     var disponiveis = ViewBag.TotalDisponiveis is int td ? td : livros.Count(l => l.Disponivel);
+    var emprestados = ViewBag.TotalEmprestados is int te ? te : totalLivros - disponiveis;
     var publicacaoMaisRecente = ViewBag.PublicacaoMaisRecente?.ToString() ?? "-";
+
+    var busca = ViewBag.Busca?.ToString() ?? string.Empty;
+    var disponibilidade = ViewBag.Disponibilidade?.ToString() ?? "todos";
 
     var currentPage = ViewBag.CurrentPage is int cp ? cp : 1;
     var totalPages = ViewBag.TotalPages is int tp ? tp : 1;
@@ -33,11 +37,74 @@
             <a class="crud-primary-btn" asp-controller="Livros" asp-action="Create">+ Novo Livro</a>
         </div>
 
+        <div class="crud-form-card mb-4">
+            <form asp-action="Index" method="get">
+                <div class="crud-form-grid">
+                    <div class="crud-form-group">
+                        <label for="busca" class="crud-form-label">Buscar livro</label>
+                        <input id="busca"
+                               name="busca"
+                               value="@busca"
+                               class="crud-form-control"
+                               placeholder="Digite título, autor ou editora" />
+                    </div>
+
+                    <div class="crud-form-group crud-form-group-small">
+                        <label for="disponibilidade" class="crud-form-label">Disponibilidade</label>
+                        <select id="disponibilidade"
+                                name="disponibilidade"
+                                class="crud-form-control crud-form-select">
+                            @if (disponibilidade == "todos")
+                            {
+                                <option value="todos" selected>Todos</option>
+                            }
+                            else
+                            {
+                                <option value="todos">Todos</option>
+                            }
+
+                            @if (disponibilidade == "disponiveis")
+                            {
+                                <option value="disponiveis" selected>Disponíveis</option>
+                            }
+                            else
+                            {
+                                <option value="disponiveis">Disponíveis</option>
+                            }
+
+                            @if (disponibilidade == "emprestados")
+                            {
+                                <option value="emprestados" selected>Emprestados</option>
+                            }
+                            else
+                            {
+                                <option value="emprestados">Emprestados</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="crud-form-actions">
+                    <button type="submit" class="crud-primary-btn">Filtrar</button>
+                    <a asp-action="Index" class="crud-secondary-btn">Limpar Filtros</a>
+                </div>
+            </form>
+        </div>
+
         @if (!livros.Any())
         {
             <div class="crud-empty-state">
-                <h3>Nenhum livro cadastrado.</h3>
-                <p>Cadastre o primeiro livro para começar a organizar sua biblioteca.</p>
+                <h3>Nenhum livro encontrado.</h3>
+
+                @if (!string.IsNullOrWhiteSpace(busca) || disponibilidade != "todos")
+                {
+                    <p>Nenhum resultado corresponde aos filtros informados.</p>
+                    <a asp-action="Index" class="crud-secondary-btn mt-3">Limpar Filtros</a>
+                }
+                else
+                {
+                    <p>Cadastre o primeiro livro para começar a organizar sua biblioteca.</p>
+                }
             </div>
         }
         else
@@ -103,7 +170,13 @@
                 <nav class="crud-pagination" aria-label="Paginação">
                     @if (hasPreviousPage)
                     {
-                        <a class="crud-pagination-link" asp-action="Index" asp-route-page="@(currentPage - 1)">Anterior</a>
+                        <a class="crud-pagination-link"
+                           asp-action="Index"
+                           asp-route-page="@(currentPage - 1)"
+                           asp-route-busca="@busca"
+                           asp-route-disponibilidade="@disponibilidade">
+                            Anterior
+                        </a>
                     }
                     else
                     {
@@ -118,13 +191,25 @@
                         }
                         else
                         {
-                            <a class="crud-pagination-link" asp-action="Index" asp-route-page="@i">@i</a>
+                            <a class="crud-pagination-link"
+                               asp-action="Index"
+                               asp-route-page="@i"
+                               asp-route-busca="@busca"
+                               asp-route-disponibilidade="@disponibilidade">
+                                @i
+                            </a>
                         }
                     }
 
                     @if (hasNextPage)
                     {
-                        <a class="crud-pagination-link" asp-action="Index" asp-route-page="@(currentPage + 1)">Próxima</a>
+                        <a class="crud-pagination-link"
+                           asp-action="Index"
+                           asp-route-page="@(currentPage + 1)"
+                           asp-route-busca="@busca"
+                           asp-route-disponibilidade="@disponibilidade">
+                            Próxima
+                        </a>
                     }
                     else
                     {
@@ -134,22 +219,29 @@
             }
 
             <div class="row g-4 crud-stats-row">
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-3 col-md-6">
                     <div class="crud-stat-card crud-stat-gold">
-                        <span class="crud-stat-label">Total de Livros</span>
+                        <span class="crud-stat-label">Livros Encontrados</span>
                         <strong class="crud-stat-value">@totalLivros</strong>
                     </div>
                 </div>
 
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-3 col-md-6">
                     <div class="crud-stat-card crud-stat-blue">
                         <span class="crud-stat-label">Disponíveis</span>
                         <strong class="crud-stat-value">@disponiveis</strong>
                     </div>
                 </div>
 
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-3 col-md-6">
                     <div class="crud-stat-card crud-stat-gold">
+                        <span class="crud-stat-label">Emprestados</span>
+                        <strong class="crud-stat-value">@emprestados</strong>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="crud-stat-card crud-stat-blue">
                         <span class="crud-stat-label">Publicação Mais Recente</span>
                         <strong class="crud-stat-value">@publicacaoMaisRecente</strong>
                     </div>
