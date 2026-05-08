@@ -1,12 +1,10 @@
-﻿
-
-namespace Biblioteca.Domain.Enums
+﻿namespace Biblioteca.Domain.Enums
 {
     public enum StatusEmprestimo
     {
         Ativo,
         Devolvido,
-        Atrasado
-
+        Atrasado,
+        DevolvidoComAtraso
     }
 }
