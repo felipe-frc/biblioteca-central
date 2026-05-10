@@ -8,18 +8,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.Web.Controllers
 {
+    /// <summary>
+    /// Controller responsável pelo gerenciamento de livros da biblioteca.
+    /// </summary>
     [Authorize]
     public class LivrosController : Controller
     {
         private readonly BibliotecaDbContext _context;
         private readonly ILogger<LivrosController> _logger;
 
+        /// <summary>
+        /// Inicializa uma nova instância do controller de livros.
+        /// </summary>
         public LivrosController(BibliotecaDbContext context, ILogger<LivrosController> logger)
         {
             _context = context;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Exibe a listagem paginada de livros com busca e filtro por disponibilidade.
+        /// </summary>
         public IActionResult Index(int page = 1, string? busca = null, string disponibilidade = "todos")
         {
             const int pageSize = 6;
@@ -98,11 +107,17 @@ namespace Biblioteca.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Exibe o formulário de cadastro de livro.
+        /// </summary>
         public IActionResult Create()
         {
             return View(new LivroFormViewModel());
         }
 
+        /// <summary>
+        /// Processa o cadastro de um novo livro.
+        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(LivroFormViewModel model)
@@ -145,6 +160,9 @@ namespace Biblioteca.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Exibe o formulário de edição de livro.
+        /// </summary>
         public IActionResult Edit(int id)
         {
             try
@@ -174,6 +192,9 @@ namespace Biblioteca.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Processa a atualização dos dados de um livro.
+        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(LivroFormViewModel model)
@@ -220,6 +241,9 @@ namespace Biblioteca.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Exibe a tela de confirmação de exclusão de livro.
+        /// </summary>
         public IActionResult Delete(int id)
         {
             try
@@ -243,6 +267,9 @@ namespace Biblioteca.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Processa a exclusão de um livro, respeitando o bloqueio quando há histórico de empréstimos.
+        /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
@@ -282,6 +309,9 @@ namespace Biblioteca.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Adiciona ao ModelState os erros de domínio relacionados aos campos do formulário de livro.
+        /// </summary>
         private void AdicionarErroDeDominio(LivroFormViewModel model, ArgumentException ex)
         {
             var mensagem = LimparMensagemDeExcecao(ex.Message);

@@ -7,18 +7,27 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Biblioteca.Web.Controllers
 {
+    /// <summary>
+    /// Controller responsável pela autenticação administrativa do sistema.
+    /// </summary>
     [Route("admin")]
     public class AdminController : Controller
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<AdminController> _logger;
 
+        /// <summary>
+        /// Inicializa uma nova instância do controller administrativo.
+        /// </summary>
         public AdminController(IConfiguration configuration, ILogger<AdminController> logger)
         {
             _configuration = configuration;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Exibe a tela de login administrativo.
+        /// </summary>
         [HttpGet("login")]
         public IActionResult Login(string? returnUrl = null)
         {
@@ -29,6 +38,9 @@ namespace Biblioteca.Web.Controllers
             return View(new LoginViewModel());
         }
 
+        /// <summary>
+        /// Processa a autenticação do administrador.
+        /// </summary>
         [HttpPost("login")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
@@ -87,6 +99,9 @@ namespace Biblioteca.Web.Controllers
             return RedirectToAction("Index", "Dashboard");
         }
 
+        /// <summary>
+        /// Realiza o logout do administrador autenticado.
+        /// </summary>
         [HttpPost("logout")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()

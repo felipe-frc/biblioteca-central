@@ -5,12 +5,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.Web.Controllers
 {
+    /// <summary>
+    /// Controller responsável pela área pública do catálogo de livros.
+    /// </summary>
     [AllowAnonymous]
     public class CatalogoController : Controller
     {
         private readonly BibliotecaDbContext _context;
         private readonly ILogger<CatalogoController> _logger;
 
+        /// <summary>
+        /// Inicializa uma nova instância do controller de catálogo público.
+        /// </summary>
         public CatalogoController(
             BibliotecaDbContext context,
             ILogger<CatalogoController> logger)
@@ -19,6 +25,9 @@ namespace Biblioteca.Web.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Exibe o catálogo público de livros com busca, filtro por disponibilidade e paginação.
+        /// </summary>
         public IActionResult Index(string? busca = null, string disponibilidade = "todos", int page = 1)
         {
             const int pageSize = 6;

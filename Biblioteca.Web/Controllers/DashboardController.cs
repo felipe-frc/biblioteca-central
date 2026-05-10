@@ -6,18 +6,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.Web.Controllers
 {
+    /// <summary>
+    /// Controller responsável pelo dashboard administrativo da biblioteca.
+    /// </summary>
     [Authorize]
     public class DashboardController : Controller
     {
         private readonly BibliotecaDbContext _context;
         private readonly ILogger<DashboardController> _logger;
 
+        /// <summary>
+        /// Inicializa uma nova instância do controller de dashboard.
+        /// </summary>
         public DashboardController(BibliotecaDbContext context, ILogger<DashboardController> logger)
         {
             _context = context;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Exibe os indicadores administrativos de livros, usuários e empréstimos.
+        /// </summary>
         public IActionResult Index()
         {
             try
