@@ -423,7 +423,7 @@ Entre os cenários cobertos estão:
 - Testes de integração com banco em memória;
 - Proteção contra regressões em fluxos principais.
 
-A pipeline de **GitHub Actions** executa build, testes e deploy automaticamente a cada push na branch `main`.
+A pipeline de **GitHub Actions** executa restore, build, testes, publish e deploy automaticamente a cada push na branch `main`.
 
 ---
 
@@ -463,9 +463,17 @@ O Bootstrap foi utilizado para acelerar a construção da interface, mantendo o 
 
 ## 🧾 Releases
 
+### [v3.5.0 — Paginação no catálogo, CI/CD refinado e padronização de mensagens](https://github.com/felipe-frc/biblioteca-aurea/releases/tag/v3.5.0)
+
+Adição de paginação ao Catálogo Público com `Skip` e `Take`, evitando o carregamento completo dos livros em uma única consulta. Refinamento do workflow principal de deploy para executar restore, build, testes, publish e deploy em sequência. Padronização de mensagens de feedback e validação nos controllers, documentação XML dos controllers e ajustes de texto na Home para refletir a busca por título, autor ou editora.
+
 ### [v3.4.0 — Testes ampliados e melhoria no domínio de empréstimos](https://github.com/felipe-frc/biblioteca-aurea/releases/tag/v3.4.0)
 
 Ampliação da cobertura de testes unitários e de integração, totalizando 73 testes automatizados. Adição do status `DevolvidoComAtraso`, separando empréstimos em aberto com prazo vencido de empréstimos já devolvidos após o prazo.
+
+### [v3.3.0 — Expansão da cobertura de testes](https://github.com/felipe-frc/biblioteca-aurea/releases/tag/v3.3.0)
+
+Ampliação da cobertura de testes unitários das entidades `Livro`, `Usuario` e `Emprestimo`. Adição de novos cenários para validações de domínio, campos obrigatórios, trim, IDs inválidos e regras de negócio. Expansão dos testes de integração do `EmprestimoAppService`, incluindo busca, filtros, paginação, bloqueio de exclusão e fluxo completo de empréstimo, devolução e novo empréstimo.
 
 ### [v3.2.0 — Prazo previsto e empréstimos em atraso](https://github.com/felipe-frc/biblioteca-aurea/releases/tag/v3.2.0)
 
