@@ -39,8 +39,6 @@ namespace Biblioteca.Web.Controllers
 
             var totalUsuarios = query.Count();
 
-            var comEmail = query.Count(u => !string.IsNullOrWhiteSpace(u.Email));
-
             var usuariosInadimplentes = _context.Emprestimos
                 .AsNoTracking()
                 .Where(e => e.DataDevolucao == null && e.DataPrevistaDevolucao < DateTime.Today)
@@ -70,7 +68,6 @@ namespace Biblioteca.Web.Controllers
             ViewBag.HasNextPage = page < totalPages;
 
             ViewBag.TotalUsuarios = totalUsuarios;
-            ViewBag.ComEmail = comEmail;
             ViewBag.UsuariosInadimplentes = usuariosInadimplentes;
 
             return View(usuarios);

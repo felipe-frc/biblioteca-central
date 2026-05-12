@@ -1,12 +1,10 @@
 ﻿@model IEnumerable<Biblioteca.Domain.Entities.Usuario>
-@using System.Linq
 
 @{
     ViewData["Title"] = "Usuários";
 
     var usuarios = Model?.ToList() ?? new List<Biblioteca.Domain.Entities.Usuario>();
     var totalUsuarios = ViewBag.TotalUsuarios is int tu ? tu : usuarios.Count;
-    var comEmail = ViewBag.ComEmail is int ce ? ce : usuarios.Count(u => !string.IsNullOrWhiteSpace(u.Email));
     var usuariosInadimplentes = ViewBag.UsuariosInadimplentes is int ui ? ui : 0;
 
     var currentPage = ViewBag.CurrentPage is int cp ? cp : 1;
@@ -135,21 +133,14 @@
             }
 
             <div class="row g-4 crud-stats-row">
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-6 col-md-6">
                     <div class="crud-stat-card crud-stat-gold">
                         <span class="crud-stat-label">Total de Usuários</span>
                         <strong class="crud-stat-value">@totalUsuarios</strong>
                     </div>
                 </div>
 
-                <div class="col-lg-4 col-md-6">
-                    <div class="crud-stat-card crud-stat-blue">
-                        <span class="crud-stat-label">Com Email</span>
-                        <strong class="crud-stat-value">@comEmail</strong>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-6 col-md-6">
                     <div class="crud-stat-card crud-stat-gold">
                         <span class="crud-stat-label">Usuários Inadimplentes</span>
                         <strong class="crud-stat-value">@usuariosInadimplentes</strong>
