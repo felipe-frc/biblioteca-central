@@ -46,6 +46,7 @@ public class EmprestimoTests
     {
         var livro = CriarLivro();
         var usuario = CriarUsuario();
+
         livro.MarcarComoEmprestado();
 
         Assert.Throws<InvalidOperationException>(() =>
@@ -130,7 +131,7 @@ public class EmprestimoTests
     }
 
     [Fact]
-    public void Devolver_DentroDoPrazo_DeveMarcarComoDevolvido()
+    public void Devolver_DentroDoPrazo_DeveAlterarStatusParaDevolvido()
     {
         var livro = CriarLivro();
         var usuario = CriarUsuario();
@@ -147,6 +148,7 @@ public class EmprestimoTests
         var livro = CriarLivro();
         var usuario = CriarUsuario();
         var emprestimo = new Emprestimo(1, livro, usuario, DateTime.Today.AddDays(7));
+
         emprestimo.Devolver();
 
         Assert.Throws<InvalidOperationException>(() => emprestimo.Devolver());
@@ -186,8 +188,8 @@ public class EmprestimoTests
         var livro = CriarLivro();
         var usuario = CriarUsuario();
         var emprestimo = new Emprestimo(1, livro, usuario, DateTime.Today.AddDays(7));
-        emprestimo.Devolver();
 
+        emprestimo.Devolver();
         emprestimo.AtualizarStatus(DateTime.Today.AddDays(30));
 
         Assert.Equal(StatusEmprestimo.Devolvido, emprestimo.Status);
@@ -234,8 +236,14 @@ public class EmprestimoTests
     // =========================================================
 
     private static Livro CriarLivro() =>
-        new("Clean Code", "Robert C. Martin", "Alta Books", "1ª edição",
-            new DateTime(2008, 8, 1), 425);
+        new(
+            "Clean Code",
+            "Robert C. Martin",
+            "Alta Books",
+            "1ª edição",
+            new DateTime(2008, 8, 1),
+            425
+        );
 
     private static Usuario CriarUsuario() =>
         new(1, "Marcos Felipe", "marcos@email.com");

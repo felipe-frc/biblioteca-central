@@ -133,11 +133,6 @@ namespace Biblioteca.Domain.Entities
             Disponivel = true;
         }
 
-        public void MarcarComoDevolvido()
-        {
-            MarcarComoDisponivel();
-        }
-
         private static DateTime CriarDataPorAno(int anoPublicacao)
         {
             if (anoPublicacao <= 0)

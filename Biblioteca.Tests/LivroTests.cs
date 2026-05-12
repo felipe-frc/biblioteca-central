@@ -162,17 +162,6 @@ public class LivroTests
         Assert.Throws<InvalidOperationException>(() => livro.MarcarComoDisponivel());
     }
 
-    [Fact]
-    public void MarcarComoDevolvido_DeveEquivalerAMarcarComoDisponivel()
-    {
-        var livro = CriarLivro();
-        livro.MarcarComoEmprestado();
-
-        livro.MarcarComoDevolvido();
-
-        Assert.True(livro.Disponivel);
-    }
-
     // =========================================================
     // Atualização de dados
     // =========================================================
