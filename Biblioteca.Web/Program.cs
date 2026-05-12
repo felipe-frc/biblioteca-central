@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Biblioteca.Services;
 using Biblioteca.Web.Data;
 using Biblioteca.Web.Services;
 using Microsoft.EntityFrameworkCore;
@@ -39,8 +38,6 @@ builder.Services.AddDbContext<BibliotecaDbContext>(options =>
 });
 
 builder.Services.AddScoped<IEmprestimoAppService, EmprestimoAppService>();
-builder.Services.AddScoped<IEmprestimoService, BibliotecaService>();
-
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
