@@ -1,17 +1,24 @@
-name: CI
+name: CI (.NET)
 
 on:
   push:
-    branches: [ "master", "main", "develop" ]
+    branches:
+      - main
+
   pull_request:
-    branches: [ "master", "main", "develop" ]
+    branches:
+      - main
 
 jobs:
-  build-and-test:
+  build-test-coverage:
+    name: Build, Test and Coverage
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup .NET 8
@@ -19,11 +26,26 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
-      - name: Restore
+      - name: Restore dependencies
         run: dotnet restore Biblioteca.sln
 
-      - name: Build
+      - name: Build solution
         run: dotnet build Biblioteca.sln --no-restore --configuration Release
 
-      - name: Test
-        run: dotnet test Biblioteca.sln --no-build --configuration Release
+      - name: Run tests with coverage
+        run: >
+          dotnet test Biblioteca.sln
+          --no-build
+          --configuration Release
+          --verbosity normal
+          --collect:"XPlat Code Coverage"
+          --results-directory ./TestResults
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v6
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./TestResults/**/coverage.cobertura.xml
+          flags: dotnet
+          name: biblioteca-aurea-coverage
+          fail_ci_if_error: false
